@@ -1,0 +1,40 @@
+version: '3.3'
+
+services:
+  db:
+    container_name: db      
+    image: postgres:14.8-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test_db
+    networks:
+      postgre_network:
+        ipv4_address: 172.19.0.13
+
+  pgadmin:
+    container_name: pgadmin4           
+    image: dpage/pgadmin4:4.15
+    restart: unless-stopped
+    ports:
+      - 5050:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=stage@stage.com
+      - PGADMIN_DEFAULT_PASSWORD=stage
+    networks:
+      postgre_network:
+        ipv4_address: 172.19.0.14
+networks:
+  postgre_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.1/16
+          #gateway: 172.19.0.255
+volumes:
+   postgres_data:

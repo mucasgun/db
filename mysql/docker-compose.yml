@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+  db_mysql:
+    container_name: mysql
+    image: mysql:8.0.35
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql  
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: devuser  
+      MYSQL_PASSWORD: devpass  
+    ports:
+      - "3306:3306"
+    networks:
+      - mysql-phpmyadmin-network    
+  phpmyadmin:
+    container_name: phpmyadmin
+    depends_on:
+      - db_mysql
+    image: phpmyadmin:5.2.1
+    restart: unless-stopped
+    environment:
+      PMA_ARBITRARY: 1
+    ports:
+      - 8090:80
+    networks:
+      - mysql-phpmyadmin-network
+
+networks:
+  mysql-phpmyadmin-network:
+    driver: bridge
+
+volumes:
+  db_data:
